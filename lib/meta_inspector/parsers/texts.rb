@@ -26,10 +26,12 @@ module MetaInspector
       # Look for candidates and pick the longest one
       def find_best_title
         candidates = [
+            meta['og:title'],
+            meta['twitter:title'],
             parsed.css('head title'),
             parsed.css('body title'),
-            meta['og:title'],
-            parsed.css('h1').first
+            parsed.css(':not(.header):not(#header):not(#logo):not(.logo):not(#nav):not(.nav) > h1').first,
+            parsed.css(':not(.header):not(#header):not(#logo):not(.logo):not(#nav):not(.nav) > h2').first
         ]
         candidates.flatten!
         candidates.compact!
