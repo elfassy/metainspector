@@ -40,7 +40,19 @@ module MetaInspector
           imgs_with_size.uniq! { |url, width, height| url }
           if @download_images
             imgs_with_size.map! do |url, width, height|
-              width, height = FastImage.size(url) if width.nil? || height.nil?
+              if url[/^data/]
+                begin
+                  tempfile = Tempfile.new("fileupload")
+                  tempfile.binmode
+                  tempfile.write(Base64.decode64 url)
+                  width, height = FastImage.size(tempfile.path) if width.nil? || height.nil?
+                ensure
+                  tempfile.close
+                  tempfile.unlink
+                end
+              else
+                width, height = FastImage.size(url) if width.nil? || height.nil?
+              end
               [url, width.to_i, height.to_i]
             end
           else
@@ -60,7 +72,7 @@ module MetaInspector
           imgs_with_size = with_size.dup
           imgs_with_size.keep_if do |url, width, height|
             ratio = width.to_f / height.to_f
-            ratio > 0.1 && ratio < 10
+            ratio > 0.1 && ratio < 10 && !url[/sprite/]
           end
           url, width, height = imgs_with_size.first
           url
