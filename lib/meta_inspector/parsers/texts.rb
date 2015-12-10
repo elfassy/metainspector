@@ -28,10 +28,10 @@ module MetaInspector
         candidates = [
             meta['og:title'],
             meta['twitter:title'],
+            parsed.css(':not(.header):not(#header):not(#logo):not(.logo):not(#nav):not(.nav) > h1').first,
+            parsed.css(':not(.header):not(#header):not(#logo):not(.logo):not(#nav):not(.nav) > h2').first,
             parsed.css('head title'),
             parsed.css('body title'),
-            parsed.css(':not(.header):not(#header):not(#logo):not(.logo):not(#nav):not(.nav) > h1').first,
-            parsed.css(':not(.header):not(#header):not(#logo):not(.logo):not(#nav):not(.nav) > h2').first
         ]
         candidates.flatten!
         candidates.compact!
